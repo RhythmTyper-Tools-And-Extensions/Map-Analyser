@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RT Map Analyser</title>
+    <link href="../src/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20">
+            <h1 class="text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 002-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                RT Map Analyser
+            </h1>
+            <p class="text-blue-200 mb-6">Upload your .rtm chart file, then select your difficulty and desired mods to calculate performance points</p>
+            <!-- File Upload -->
+                <label class="flex items-center justify-center w-full h-32 px-4 transition bg-white/5 border-2 border-dashed border-white/30 rounded-lg cursor-pointer hover:bg-white/10 hover:border-white/50">
+                    <div class="flex flex-col items-center space-y-2">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        <span class="text-white font-medium">Click to upload .rtm file</span>
+                        <span class="text-blue-200 text-sm">or drag and drop</span>
+                    </div>
+                    <input type="file" id="fileInput" class="hidden" accept=".rtm">
+                </label>
+        </div>
+    </div>
+    <div id="controls" class="m-4 max-w-4xl mx-auto hidden">
+        <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/20">
+            <div >
+                <p id="chartMapper" class="text-1xl font-bold text-white mb-4">chart mapper</p>
+
+                <!-- Difficulty -->
+                <div class="mb-6">
+                    <label class="block text-white mb-3 font-medium">Difficulty</label>
+                    <div id="difficultyButtons" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <!-- Mods-->
+                <div class="mb-6">
+                    <label class="block text-white mb-3 font-medium">Mods</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="modNone" class="mod-button px-4 py-2 rounded-lg font-medium transition-all bg-green-500 text-white hover:scale-105 active:scale-95">
+                            None
+                        </button>
+                        <button id="modNC" class="mod-button px-4 py-2 rounded-lg font-medium transition-all bg-white/10 text-white border border-white/30 hover:scale-105 active:scale-95">
+                            NC (NightCore)
+                        </button>
+                        <button id="modHT" class="mod-button px-4 py-2 rounded-lg font-medium transition-all bg-white/10 text-white border border-white/30 hover:scale-105 active:scale-95">
+                            HT (Half Time)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Combo</label>
+                        <input type="number" id="Combo" min="0" value="0" 
+                            class="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <div></div>
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Perfect</label>
+                        <input type="number" id="perfect" min="0" value="0" 
+                            class="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Ok</label>
+                        <input type="number" id="ok" min="0" value="0" 
+                            class="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Good</label>
+                        <input type="number" id="good" min="0" value="0" 
+                            class="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <div>
+                        <label class="block text-white mb-2 font-medium">Miss</label>
+                        <input type="number" id="miss" min="0" value="0" 
+                            class="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                </div>
+                <div class="bg-yellow-500/10 rounded-lg p-3 border border-yellow-400/30 mb-6 flex items-center justify-center">
+                    <p class="text-yellow-200 text-sm">
+                        <span class="font-medium">Notes:</span> <span id="totalNotes">0</span> | 
+                        <span class="font-medium">Holds:</span> <span id="totalHolds">0</span> | 
+                        <span class="font-medium">Typing:</span> <span id="totalTyping">0</span> | 
+                        <span class="font-medium">Remaining:</span> <span id="remaining">0</span> |  
+                        <span class="font-medium">Accuracy:</span> <span id="calculatedAcc">100.00%</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="results" class="m-4 max-w-4xl mx-auto rounded-2xl overflow-hidden hidden">
+        <div class="relative">
+            <!-- Background image -->
+            <div id="background" class="absolute inset-0 bg-cover bg-center filter brightness-50 transition-all duration-300"></div>
+
+            <div class="relative p-8 bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20">
+                <div class="flex items-center gap-2">
+                    <h2 id="songName" class="text-2xl font-bold text-white"></h2>
+                    <span id="starRatingBadge" class="inline-block px-2 py-1 text-xs font-bold rounded-2xl text-white bg-green-500"></span>
+                </div>
+                <p id="songAuthor" class="text-xl text-white mb-4">song author</p>
+                
+                <!-- PP element centered -->
+                <div class="absolute flex gap-2" style="top: 50%; left: 50%; transform: translate(-50%, -50%); align-items: baseline;">
+                    <span id="ppValue" class="text-4xl font-bold text-green-500">0</span>
+                    <span class="text-sm text-gray-400">PP</span>
+                </div>
+            </div>
+
+            <!-- Play button in corner -->
+            <button id="playButton" class="absolute flex items-center justify-center w-10 h-10 bg-white hover:scale-105 active:scale-95 rounded-lg transition-all shadow-2xl border border-white" style="bottom: 20px; right: 20px;">
+                <svg id="playIcon" class="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 24 24" style="margin-left: 2px;">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                <svg id="pauseIcon" class="w-5 h-5 text-gray-900 hidden" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                </svg>
+            </button>
+        </div>
+        <audio id="songAudio" class="hidden"></audio>
+    </div>
+        
+    <script src="../src/js/index.js"></script>
+</body>
+
+</html>
