@@ -355,12 +355,16 @@ function updateResults(mod = 'none') {
     const diffData = getParsedDifficultyData()
     
     if (mod === 'nc') {
+        diffData.overallDifficulty = (80 - diffData.overallDifficulty*6) / 1.5
+        diffData.overallDifficulty = (diffData.overallDifficulty - 80) / -6
         diffData.notes.forEach(note => {
             if (note.time !== undefined) note.time /= 1.5;
             if (note.startTime !== undefined) note.startTime /= 1.5;
             if (note.endTime !== undefined) note.endTime /= 1.5;
         });
     } else if (mod === 'ht') {
+        diffData.overallDifficulty = (80 - diffData.overallDifficulty*6) / 0.75
+        diffData.overallDifficulty = Math.max((diffData.overallDifficulty - 80) / -6,0)
         diffData.notes.forEach(note => {
             if (note.time !== undefined) note.time /= 0.75;
             if (note.startTime !== undefined) note.startTime /= 0.75;
@@ -536,12 +540,16 @@ function updateStarRating(mod = 'none') {
     }
 
     if (mod === 'nc') {
+        diffData.overallDifficulty = (80 - diffData.overallDifficulty*6) / 1.5
+        diffData.overallDifficulty = (diffData.overallDifficulty - 80) / -6
         diffData.notes.forEach(note => {
             if (note.time !== undefined) note.time /= 1.5;
             if (note.startTime !== undefined) note.startTime /= 1.5;
             if (note.endTime !== undefined) note.endTime /= 1.5;
         });
     } else if (mod === 'ht') {
+        diffData.overallDifficulty = (80 - diffData.overallDifficulty*6) / 0.75
+        diffData.overallDifficulty = Math.max((diffData.overallDifficulty - 80) / -6,0)
         diffData.notes.forEach(note => {
             if (note.time !== undefined) note.time /= 0.75;
             if (note.startTime !== undefined) note.startTime /= 0.75;
