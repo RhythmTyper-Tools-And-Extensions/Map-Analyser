@@ -356,9 +356,9 @@ function updateResults() {
         diffData.overallDifficulty = (80 - diffData.overallDifficulty*6) / 1.5
         diffData.overallDifficulty = (diffData.overallDifficulty - 80) / -6
         diffData.notes.forEach(note => {
-            if (note.time !== undefined) note.time *= 1.5;
-            if (note.startTime !== undefined) note.startTime *= 1.5;
-            if (note.endTime !== undefined) note.endTime *= 1.5;
+            if (note.time !== undefined) note.time /= 1.5;
+            if (note.startTime !== undefined) note.startTime /= 1.5;
+            if (note.endTime !== undefined) note.endTime /= 1.5;
         });
     } else if (currentMod === 'ht') {
         diffData.overallDifficulty = (80 - diffData.overallDifficulty*6) / 0.75
